@@ -46620,6 +46620,8 @@ function handleRequest(request) {
       return;
     }
 
+    console.log("SAML request", info.login);
+
     // populate fields from the request
     $('#authnContextClassRef').val(info.login.authnContextClassRef);
     $('#nameIdentifierFormat').val(info.login.nameIdentifierFormat);
