@@ -46412,7 +46412,7 @@ var algorithms = {
 };
 
 exports.parseRequest = function(options, request, callback) {
-  options.issuer = options.issuer || 'http://capriza.com/samling';
+  options.issuer = options.issuer || 'http://alfaecare.se/samling';
   request = decodeURIComponent(request);
   var buffer = new Buffer(request, 'base64');
   zlib.inflateRaw(buffer, function(err, result) {
@@ -46689,22 +46689,22 @@ $(function() {
     cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
     var attrs = [{
       name: 'commonName',
-      value: 'capriza.com'
+      value: 'Alfa eCare Samling'
     }, {
       name: 'countryName',
-      value: 'US'
+      value: 'SE'
     }, {
       shortName: 'ST',
-      value: 'Virginia'
+      value: 'Vastmanland'
     }, {
       name: 'localityName',
-      value: 'Blacksburg'
+      value: 'Vasteras'
     }, {
       name: 'organizationName',
-      value: 'Samling'
+      value: 'Alfa eCare'
     }, {
       shortName: 'OU',
-      value: 'Samling'
+      value: 'Development'
     }];
     cert.setSubject(attrs);
     cert.setIssuer(attrs);
@@ -46738,7 +46738,7 @@ $(function() {
       name: 'subjectAltName',
       altNames: [{
         type: 6, // URI
-        value: 'http://capriza.com/samling'
+        value: 'http://alfaecare.se/samling'
       }]
     }, {
       name: 'subjectKeyIdentifier'
