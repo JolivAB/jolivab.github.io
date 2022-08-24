@@ -46413,7 +46413,6 @@ var algorithms = {
 
 exports.parseRequest = function(options, request, callback) {
   options.issuer = options.issuer || 'http://alfaecare.se/samling';
-  console.log("parseRequest", arguments);
   request = decodeURIComponent(request);
   var buffer = new Buffer(request, 'base64');
   zlib.inflateRaw(buffer, function(err, result) {
@@ -46620,9 +46619,6 @@ function handleRequest(request) {
       logout(info.logout);
       return;
     }
-
-    console.log("SAML request", info.login);
-
     // populate fields from the request
     $('#authnContextClassRef').val(info.login.authnContextClassRef);
     $('#nameIdentifierFormat').val(info.login.nameIdentifierFormat);
@@ -46669,7 +46665,7 @@ $(function() {
     }
   });
 
-  $('#copyResponseToClipboard').click(function() {
+  $('#copyResponseToClipboard').on('click', function() {
     window.CLIPBOARDJS.copy($('#samlResponse').val());
     $('#copyResponseToClipboard').tooltip('show');
     setTimeout(function() {
@@ -46677,11 +46673,11 @@ $(function() {
     }, 1500);
   });
 
-  $('#signedInLogout').click(function() {
+  $('#signedInLogout').on('click', function() {
     logout();
   });
 
-  $('#generateKeyAndCert').click(function() {
+  $('#generateKeyAndCert').on('click', function() {
     var pki = window.forge.pki;
     var keypair = pki.rsa.generateKeyPair({bits: 1024});
     var cert = pki.createCertificate();
@@ -46755,12 +46751,12 @@ $(function() {
     $('#signatureKey').val(privateKeyVal);
   });
 
-  $('#saveKeyAndCert').click(function() {
+  $('#saveKeyAndCert').on('click', function() {
     localStorage.setItem('certVal', $('#signatureCert').val().trim());
     localStorage.setItem('privateKeyVal', $('#signatureKey').val().trim());
   });
 
-  $('#createResponse').click(function() {
+  $('#createResponse').on('click', function() {
     $('#nameIdentifierControl').removeClass('has-error');
     $('#callbackUrlControl').removeClass('has-error');
     $('#signatureKeyControl').removeClass('has-error');
@@ -46769,25 +46765,25 @@ $(function() {
     var error = false;
     if ($('#nameIdentifier').val().trim().length === 0) {
       $('#nameIdentifierControl').addClass('has-error');
-      !error && $('#nameIdentifier').focus();
+      !error && $('#nameIdentifier').trigger('focus');
       error = true;
     }
 
     if ($('#callbackUrl').val().trim().length === 0) {
       $('#callbackUrlControl').addClass('has-error');
-      !error && $('#callbackUrl').focus();
+      !error && $('#callbackUrl').trigger('focus');
       error = true;
     }
 
     if ($('#signatureKey').val().trim().length === 0) {
       $('#signatureKeyControl').addClass('has-error');
-      !error && $('#signatureKey').focus();
+      !error && $('#signatureKey').trigger('focus');
       error = true;
     }
 
     if ($('#signatureCert').val().trim().length === 0) {
       $('#signatureCertControl').addClass('has-error');
-      !error && $('#signatureCert').focus();
+      !error && $('#signatureCert').trigger('focus');
       error = true;
     }
 
@@ -46818,7 +46814,7 @@ $(function() {
     $('#navbarSamling a[href="#samlResponseTab"]').tab('show')
   });
 
-  $('#postSAMLResponse').click(function(event) {
+  $('#postSAMLResponse').on('click', function(event) {
     event.preventDefault();
     $('#samlResponseControl').removeClass('has-error');
     $('#sessionDurationControl').removeClass('has-error');
@@ -46829,24 +46825,24 @@ $(function() {
     var samlResponse = $('#samlResponse').val().trim();
     if (samlResponse.length === 0) {
       $('#samlResponseControl').addClass('has-error');
-      !error && $('#samlResponse').focus();
+      !error && $('#samlResponse').trigger('focus');
       error = true;
     }
 
     var sessionDuration = $('#sessionDuration').val().trim();
     if (sessionDuration.length === 0) {
       $('#sessionDurationControl').addClass('has-error');
-      !error && $('#sessionDuration').focus();
+      !error && $('#sessionDuration').trigger('focus');
       error = true;
     } else if (!sessionDuration.match(/^\d+$/)) {
-      error && $('#sessionDuration').focus();
+      error && $('#sessionDuration').trigger('focus');
       error = true;
     }
 
     var callbackUrl = $('#callbackUrl').val().trim();
     if (callbackUrl.length === 0) {
       $('#callbackUrlControl').addClass('has-error');
-      !error && $('#callbackUrl').focus();
+      !error && $('#callbackUrl').trigger('focus');
       error = true;
     }
 
@@ -46874,6 +46870,7 @@ $(function() {
 
     var form = $('#samlResponseForm')[0];
     form.action = callbackUrl;
+    console.log("POSTing SAML response", form);
     form.submit();
   });
 
