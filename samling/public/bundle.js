@@ -46413,6 +46413,7 @@ var algorithms = {
 
 exports.parseRequest = function(options, request, callback) {
   options.issuer = options.issuer || 'http://alfaecare.se/samling';
+  console.log("parseRequest", arguments);
   request = decodeURIComponent(request);
   var buffer = new Buffer(request, 'base64');
   zlib.inflateRaw(buffer, function(err, result) {
@@ -46881,7 +46882,7 @@ $(function() {
     if (end === -1) {
       end = undefined;
     }
-    handleRequest(location.search.substr(13, end));
+    handleRequest(location.search.substring(13, end));
   }
 
 });
