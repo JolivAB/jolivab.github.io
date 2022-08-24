@@ -46586,7 +46586,6 @@ exports.createResponse = function(options) {
   response += '</samlp:Status>';
   response += options.assertion;
   response += '</samlp:Response>';
-
   return response;
 };
 
@@ -46828,6 +46827,7 @@ $(function() {
       !error && $('#samlResponse').trigger('focus');
       error = true;
     }
+    $('#samlResponse').val(btoa(samlResponse));
 
     var sessionDuration = $('#sessionDuration').val().trim();
     if (sessionDuration.length === 0) {
