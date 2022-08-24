@@ -90,3 +90,7 @@ section > ol {
 .sidebar-module-inset ol:last-child {
     margin-bottom: 0;
 }
+
+.muted {
+    opacity: .5;
+}
