@@ -31,6 +31,14 @@ section > ol {
     background-color: #ffffff;
 }
 
+.form-check {
+    margin-bottom: 14px;
+}
+
+.form-check-label {
+    margin-left: 4px;
+}
+
 /*
  * Masthead for nav
  */
@@ -89,8 +97,4 @@ section > ol {
 .sidebar-module-inset ul:last-child,
 .sidebar-module-inset ol:last-child {
     margin-bottom: 0;
-}
-
-.muted {
-    opacity: .5;
 }

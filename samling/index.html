@@ -21,7 +21,7 @@
 <nav class="navbar navbar-static-top samling-navbar">
   <div class="container-fluid">
     <span class="navbar-header ">
-      <img class="samling-brand-logo" src="/AlfaeCare-logo150x56px.png" >
+      <img class="samling-brand-logo" src="public/images/logos-scorpion.svg" >
       <span class="samling-brand">SAMLING <span class="samling-brand-subtitle">Serverless SAML IDP</span></span>
     </span>
   </div>
@@ -40,6 +40,9 @@
       <li role="presentation" class="">
         <a class="samling-nav-item" href="#userDetailsTab" aria-controls="userDetailsTab" role="tab"
            data-toggle="pill">User Details</a></li>
+      <li role="presentation" class="">
+        <a class="samling-nav-item" href="#showMetadata" aria-controls="showMetadata" role="tab"
+           data-toggle="pill">IdP Metadata</a></li>
       <li role="presentation" class="">
         <a class="samling-nav-item" href="#whatsThisTab" aria-controls="whatsThisTab" role="tab"
            data-toggle="pill">What is this?</a></li>
@@ -65,7 +68,7 @@
                 <input type="text" class="form-control" id="nameIdentifier">
               </div>
               <div class="form-group" id="callbackUrlControl">
-                <label class="control-label" for="callbackUrl">Callback URL *</label>
+                <label class="control-label" for="callbackUrl">Assertion Consumer URL (Recipient) *</label>
                 <input type="text" class="form-control" id="callbackUrl">
               </div>
               <div class="form-group">
@@ -79,8 +82,16 @@
                        value="urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified">
               </div>
               <div class="form-group">
+                <label class="control-label" for="inResponseTo">In Reponse To</label>
+                <input type="text" class="form-control" id="inResponseTo" value="">
+              </div>
+              <div class="form-group">
+                <label class="control-label" for="audience">Audience</label>
+                <input type="text" class="form-control" id="audience" value="">
+              </div>
+              <div class="form-group">
                 <label class="control-label" for="issuer">Issuer</label>
-                <input type="text" class="form-control" id="issuer" value="http://alfaecare.se/samling">
+                <input type="text" class="form-control" id="issuer" value="https://capriza.github.io/samling/samling.html">
               </div>
               <div class="form-group">
                 <label class="control-label" for="samlStatusCode">SAML Status Code</label>
@@ -88,11 +99,28 @@
                        value="urn:oasis:names:tc:SAML:2.0:status:Success">
               </div>
               <div class="form-group">
+                <label class="control-label" for="lifetimeInSeconds">Assertion Lifetime (seconds)</label>
+                <input type="text" class="form-control" id="lifetimeInSeconds" value="600">
+              </div>
+              <div class="form-group">
                 <label class="control-label" for="samlStatusMessage">SAML Status Message</label>
                 <input type="text" class="form-control" id="samlStatusMessage">
               </div>
 
-              <div class="row muted">
+              <div class="form-group">
+                  <label class="control-label" for="samlAttributes">SAML Attributes</label>
+                  <small class="form-text text-muted">place each attribute on a separate line</small>
+                  <textarea class="form-control" rows="3" id="samlAttributes" placeholder="attr1=value1&#10;attr2=value2"></textarea>
+              </div>
+              <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-check" id="signResponseControl">
+                      <input type="checkbox" class="form-check-input" id="signResponse">
+                      <label class="form-check-label" for="signResponse">Sign Response (in addition to the assertion)</label>
+                    </div>
+                  </div>
+                </div>
+              <div class="row">
                 <div class="form-group col-md-6" id="signatureKeyControl">
                   <label class="control-label" for="signatureKey">
                     Signature Private Key *
@@ -119,8 +147,10 @@
               <dl>
                 <dt>Name Identifier</dt>
                 <dd>The user name that will appear in the assertion as logged-in.</dd>
-                <dt>Callback URL</dt>
-                <dd>The consumer URL where the SAML Response will be posted back to.</dd>
+                <dt>Assertion Consumer URL</dt>
+                <dd>The assertion consumer URL where the SAML Response will be posted back to.</dd>
+                <dt>Sign Response</dt>
+                <dd>If checked, the SAML response will be signed in addition to the assertion.</dd>
                 <dt>Signature Private Key</dt>
                 <dd>The private key that will be used to sign the SAML assertion.</dd>
                 <dt>Signature Certificate</dt>
@@ -131,7 +161,7 @@
                 <dd>Generate a new random private/public key pair.</dd>
                 <dt>Save</dt>
                 <dd>Save the private key and certificate to the local storage.</dd>
-                <dt>Create Response</dt>
+                <dt>Next</dt>
                 <dd>Create the SAML Response based on the provided properties.
                   You will be transferred to the <b>SAML Response</b> section.
                 </dd>
@@ -162,8 +192,16 @@
                     </div>
                     <div class="col-md-8">
                       <div class="form-group" id="callbackUrlReadOnlyControl">
-                        <label class="control-label" for="callbackUrlReadOnly">callbackUrl</label>
-                        <input type="text" class="form-control" id="callbackUrlReadOnly" readonly>
+                        <label class="control-label" for="callbackUrlReadOnly">Assertion Consumer URL</label>
+                        <input type="text" class="form-control" id="callbackUrlReadOnly">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group" id="relayStateControl">
+                        <label class="control-label" for="relayState">RelayState</label>
+                        <input type="text" class="form-control" name="RelayState" id="relayState">
                       </div>
                     </div>
                   </div>
@@ -171,7 +209,7 @@
                     SAML Response *
                   </label>
                   <button id="copyResponseToClipboard" type="button" class="btn btn-default btn-xs pull-right"
-                          data-toggle="tooltip" title="Copied!" data-trigger="manual" data-placement="top">
+                          data-toggle="tooltip" title="Copied" data-trigger="manual" data-placement="top">
                     Copy to Clipboard
                   </button>
                   <textarea class="form-control" rows="28" name="SAMLResponse" id="samlResponse"
@@ -186,7 +224,7 @@
             <div class="sidebar-module">
               <dl>
                 <dt>SAML Response</dt>
-                <dd>This is the saml response the will be posted to the <b>Callback URL</b>.</dd>
+                <dd>This is the saml response the will be posted to the <b>Assertion Consumer URL</b>.</dd>
                 <dt>Copy to Clipboard</dt>
                 <dd>Copy the SAML response XML to the clipboard.</dd>
                 <dt>Session Duration</dt>
@@ -194,8 +232,10 @@
                   that
                   the cookie will expire after closing the browser tab.
                 </dd>
-                <dt>Callback URL</dt>
-                <dd>The consumer URL where the SAML Response will be posted.</dd>
+                <dt>Assertion Consumer URL</dt>
+                <dd>(readonly) The consumer URL where the SAML Response will be posted.</dd>
+                <dt>RelayState</dt>
+                <dd>The RelayState parameter that will posted back to the Assertion Consumer URL along with the SAML response.</dd>
               </dl>
             </div>
           </div>
@@ -226,6 +266,21 @@
                 <dd>Log the user out, erasing the cookie.</dd>
               </dl>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div role="tabpanel" class="tab-pane samling-tab" id="showMetadata">
+        <div class="row">
+          <div class="col-md-9" role="main">
+            <h2>SAMLING IdP Metadata</h2>
+            <p>
+              <pre id="idpMetadata" style="text-overflow: auto"></pre>
+            </p>
+            <p>
+              <a class="btn btn-primary pull-right" href="#" role="button" id="copyMetadata" 
+              data-toggle="tooltip" title="Copied" data-trigger="manual" data-placement="top">Copy Metadata</a>
+            </p>
           </div>
         </div>
       </div>
