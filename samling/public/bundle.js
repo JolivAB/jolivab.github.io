@@ -46425,6 +46425,7 @@ exports.parseRequest = function(options, request, callback) {
       var rootElement = doc.documentElement;
       if (rootElement.localName == 'AuthnRequest') {
         info.login = {};
+        info.login.id = rootElement.getAttribute('ID');
         info.login.callbackUrl = rootElement.getAttribute('AssertionConsumerServiceURL');
         info.login.destination = rootElement.getAttribute('Destination');
         var nameIDPolicy = rootElement.getElementsByTagNameNS(SAMLP_NS, 'NameIDPolicy')[0];
@@ -46450,6 +46451,8 @@ exports.parseRequest = function(options, request, callback) {
             '</samlp:LogoutResponse>';
       }
     } catch(e) {
+      console.error(e);
+      throw e;
     }
     callback(info);
   });
@@ -46618,11 +46621,12 @@ function handleRequest(request) {
       logout(info.logout);
       return;
     }
-    // populate fields from the request
+    console.log("Parsed SAML request", info.login);
     $('#authnContextClassRef').val(info.login.authnContextClassRef);
     $('#nameIdentifierFormat').val(info.login.nameIdentifierFormat);
     $('#callbackUrl').val(info.login.callbackUrl);
     $('#issuer').val(info.login.destination);
+    $('#requestId').val(info.login.id);
 
     // auto-login if we also have the username already populated because of the samling cookie
     if ($('#signedInUser').text().trim().length > 0) {
@@ -46658,7 +46662,9 @@ $(function() {
         $('#issuer').val(data.issuer);
         $('#authnContextClassRef').val(data.authnContextClassRef);
         $('#nameIdentifierFormat').val(data.nameIdentifierFormat);
+        $('#requestId').val(data.requestId);
       } catch (e) {
+        console.error(e);
         $('#signedInAt').text('ERROR: ' + e.message);
       }
     }
@@ -46803,6 +46809,7 @@ $(function() {
     var response = window.SAML.createResponse({
       instant: new Date().toISOString().trim(),
       issuer: $('#issuer').val().trim(),
+      inResponseTo: $('#requestId').val().trim(),
       destination: callbackUrl,
       assertion: assertion,
       samlStatusCode: $('#samlStatusCode').val().trim(),
@@ -46862,7 +46869,8 @@ $(function() {
       callbackUrl: $('#callbackUrl').val().trim(),
       issuer: $('#issuer').val().trim(),
       authnContextClassRef: $('#authnContextClassRef').val().trim(),
-      nameIdentifierFormat: $('#nameIdentifierFormat').val().trim()
+      nameIdentifierFormat: $('#nameIdentifierFormat').val().trim(),
+      requestId: $('#requestId').val().trim()
     };
     var cookieValue = btoa(JSON.stringify(cookieData));
     deleteCookie();
